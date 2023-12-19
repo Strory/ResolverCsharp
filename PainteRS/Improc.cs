@@ -32,6 +32,8 @@ namespace PainteRS
                                        // List <string> formuls = new List<string>();
         List<double> otnosheniya = new List<double>(); //первые 6 элементов для ф. Otnoshenie, остальные в FindRelativeCenterMassOrMat получают координаты центров
         public static List<List<String>> instructions = new List<List<String>>();
+        private double[] functions;
+        Dictionary<string, Dictionary<string, double>> functionsMap;
         //List <string> namesLibs = new List<string>();
 
         private string[] _LIST;
@@ -97,7 +99,6 @@ namespace PainteRS
                 }
                 x++;
             }
-
         }
         public (double cxl, double cxr, double cyt, double cyd) Counter()
         {
@@ -502,30 +503,6 @@ namespace PainteRS
             return maxLetter;
         }
 
-        // Подключение библиотек
-        /*     public void addLibrary(StreamReader sr)
-             {
-                 *//*types: impulse, range;*//*
-                 String type;
-                 String variableType1; // Lmin/Lmax : 
-                 String pointsCount;
-                 String point;
-
-
-                 List<String> formula = new List<string>();
-
-                 int i = 0;
-                 string line;
-                 while ((line = sr.ReadLine()) != null)
-                 {
-                     formula[i] = line;
-                     // Делаем что-то с прочитанной строкой
-                     Console.WriteLine(line);
-                 }
-
-
-             }*/
-
         // Расстояние
         private double calculateR(Point p1, Point p2)
         {
@@ -534,15 +511,90 @@ namespace PainteRS
             return Math.Sqrt(rX * rX + rY * rY);
         }
 
+        private double sigmoid(double x, double max)
+        {
+            double slope = 10;
+            double scaledValue = x / max;
+            return 1 / (1 + Math.Exp(-slope * (scaledValue - 0.5)));
+        }
+
+        // Точка входа
+
         private string getAllResults()
         {
+            // Для первого формата
             string mainString = "";
             for (int i = 0; i < instructions.Count; ++i)
             {
-                mainString += instructions[i][1] + "\n";
-                mainString += instructionsReader(i) + "\n";
+                string instructionFormat = instructions[i][0].Split('.')[1];
+                if (instructionFormat == "txt")
+                {
+                    mainString += instructions[i][1] + "\n";
+                    mainString += instructionsReader(i) + "\n";
+                }
+                else if (instructionFormat == "rsr")
+                {
+                    mainString += instructions[i][1] + "\n";
+                    // новая интерпретация!!!
+                    mainString += instructionsReader2(i);
+                }
             }
             return mainString;
+        }
+
+        private string instructionsReader2(int instructionNumber)
+        {
+            List<string> instruction = instructions[instructionNumber];
+            Dictionary<string, double> globalVariables = new Dictionary<string, double>();
+            Dictionary<string, double> results = new Dictionary<string, double>();
+            Dictionary<string, double> percents = new Dictionary<string, double>();
+            int stringNumber = 2;
+            // блок 1 создание мапы глобальных переменных
+            int instructionsCount = int.Parse(instruction[stringNumber]);
+            ++stringNumber;
+            for (int i = 0; i < instructionsCount; ++i)
+            {
+                string[] pair = instruction[stringNumber].Split();
+                string key = pair[0];
+                int instCount = int.Parse(pair[1]);
+                double value = getValue2(stringNumber, instruction, instCount, globalVariables);
+                globalVariables.Add(key, value);
+                stringNumber += instCount + 1;
+            }
+            // блок 2 создание мапы процентов
+            instructionsCount = int.Parse(instruction[stringNumber]);
+            ++stringNumber;
+            for (int i = 0; i < instructionsCount; ++i)
+            {
+                string[] pair = instruction[stringNumber].Split();
+                string key = pair[0];
+                int instCount = int.Parse(pair[1]);
+                double value = getValue2(stringNumber, instruction, instCount, globalVariables);
+                percents.Add(key, value);
+                stringNumber += instCount + 1;
+            }
+            // блок 3 создание мапы результатов
+            instructionsCount = int.Parse(instruction[stringNumber]);
+            ++stringNumber;
+            for (int i = 0; i < instructionsCount; ++i)
+            {
+                string[] pair = instruction[stringNumber].Split();
+                string key = pair[0];
+                int instCount = int.Parse(pair[1]);
+                double value = getValue2(stringNumber, instruction, instCount, globalVariables);
+                results.Add(key, value);
+                stringNumber += instCount + 1;
+            }
+            // Создание строки вывода
+            // извлечение максимума
+            string symb = getMaxLetter(results);
+            // проценты
+            string result = "res: " + symb + "\n";
+            foreach (var pair in percents)
+            {
+                result += pair.Key + ": " + Math.Round(pair.Value * 100, 2) + "%\n";
+            }
+            return result;
         }
 
         private string instructionsReader(int instructionNumber)
@@ -553,7 +605,7 @@ namespace PainteRS
             string[] letters = instruction[1].ToCharArray().Select(c => c.ToString()).ToArray();
             int stringNumber = 2;
             for (int i = 0; i < letters.Length; ++i)
-            {               
+            {
                 results.Add(letters[i], getValue(stringNumber, instruction));
                 stringNumber += int.Parse(instruction[stringNumber]) + 1;
             }
@@ -564,6 +616,22 @@ namespace PainteRS
         private string getMaxLetter(Dictionary<string, double> letters)
         {
             return letters.FirstOrDefault(x => x.Value == letters.Values.Max()).Key;
+        }
+
+        private double getValue2(int stringNumber, List<string> instruction, int variablesCount, Dictionary<string, double> globalVariables)
+        {
+            double[] variables = new double[variablesCount];
+            int start = stringNumber + 1;
+            int end = start + variablesCount;
+            for (int i = start; i < end; ++i)
+            {
+                string[] tmp = instruction[i].Split(new char[] { ' ' });
+                int index = int.Parse(tmp[0]);
+                double var1 = createVariable(tmp[2], tmp[3], variables, globalVariables);
+                double var2 = createVariable(tmp[4], tmp[5], variables, globalVariables);
+                variables[index] = getResultOperation(tmp[1], var1, var2);
+            }
+            return variables[variables.Length - 1];
         }
 
         private double getValue(int stringNumber, List<string> instruction)
@@ -590,6 +658,13 @@ namespace PainteRS
             if (type == "/") { return var1 / var2; }
             if (type == "abs") { return Math.Abs(var1); }
             if (type == "=") { return var1; }
+            if (type == "<") { return var1 < var2 ? 1 : 0; }
+            if (type == ">") { return var1 > var2 ? 1 : 0; }
+            if (type == "==") { return var1 == var2 ? 1 : 0; }
+            if (type == "&") { return (!(var1 == 0)) && (!(var2 == 0)) ? 1 : 0; }
+            if (type == "|") { return (!(var1 == 0)) || (!(var2 == 0)) ? 1 : 0; }
+            if (type == "!") { return (!(var1 == 0)) ? 0 : 1; }
+            if (type == "sig") { return sigmoid(var1, var2); }
             return 0;
         }
 
@@ -597,110 +672,107 @@ namespace PainteRS
         {
             if (type == "c") {
                 double res;
-                /*                double result;
-                                if (Double.TryParse(value, out result))
-                                {
-                                    return result;
-                                } else
-                                {
-                                    return 137;
-                                }*/
                 double.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out res);
                 return res;
-                /*return Double.Parse(value);*/
             }
             if (type == "v") { return variables[int.Parse(value)]; }
-            if (type == "f") {
-/*                double[] coeffs = { getLminToMax(getCenterMass()), getLminToMax(getCenterCenter()), getLminToMax(getLeftDown()), getLminToMax(getRightDown()),
-                    getLminToMax(getLeftUp()), getLminToMax(getRightUp()), getLminToMax(getLeftCenter()), getLminToMax(getCenterUp())};*/
+            if (type == "f") { return getFunctionValue(value); }
+            return 0;
+        }
 
-                double[] coeffs = { getPixelsCount0(), getPixelsCount1(), getPixelsCount2(), getPixelsCount3(), getLminToMax(getCenterMass()),
-                getLminToMax(getLeftDown()), getLminToMax(getRightDown()), getLminToMax(getLeftUp()), getLminToMax(getRightUp()),
-                getLminToMax(getLeftCenter()), getLminToMax(getCenterUp()), getLminToMax(getCenterCenter()),
-                // Координаты
-                getCenterMass().X, getCenterMass().Y, getLeftDown().X, getLeftDown().Y, getRightDown().X, getRightDown().Y,
-                getLeftUp().X, getLeftUp().Y, getRightUp().X, getRightUp().Y, getLeftCenter().X, getLeftCenter().Y, getCenterUp().X,
-                getCenterUp().Y, getCenterCenter().X, getCenterCenter().Y,
-                // Серклы 28                29                      30                          31                              32
-                getCircle(getCenterUp()), getCircle(getRightUp()), getCircle(getLeftCenter()), getCircle(getCenterCenter()), getCircle(getCenterDown())};
-                
-
-
-
+        private double createVariable(string type, string value, double[] variables, Dictionary<string, double> globalVariables)
+        {
+            if (type == "c")
+            {
                 double res;
-                switch (value)
-                {
-                    case "0":
-                        res = coeffs[0]; break;
-                    case "1":
-                        res = coeffs[1]; break;
-                    case "2":
-                        res = coeffs[2]; break;
-                    case "3":
-                        res = coeffs[3]; break;
-                    case "4":
-                        res = coeffs[4]; break;
-                    case "5":
-                        res = coeffs[5]; break;
-                    case "6":
-                        res = coeffs[6]; break;
-                    case "7":
-                        res = coeffs[7]; break;
-                    case "8":
-                        res = coeffs[8]; break;
-                    case "9":
-                        res = coeffs[9]; break;
-                    case "10":
-                        res = coeffs[10]; break;
-                    case "11":
-                        res = coeffs[11]; break;
-                    case "12":
-                        res = coeffs[12]; break;
-                    case "13":
-                        res = coeffs[13]; break;
-                    case "14":
-                        res = coeffs[14]; break;
-                    case "15":
-                        res = coeffs[15]; break;
-                    case "16":
-                        res = coeffs[16]; break;
-                    case "17":
-                        res = coeffs[17]; break;
-                    case "18":
-                        res = coeffs[18]; break;
-                    case "19":
-                        res = coeffs[19]; break;
-                    case "20":
-                        res = coeffs[20]; break;
-                    case "21":
-                        res = coeffs[21]; break;
-                    case "22":
-                        res = coeffs[22]; break;
-                    case "23":
-                        res = coeffs[23]; break;
-                    case "24":
-                        res = coeffs[24]; break;
-                    case "25":
-                        res = coeffs[25]; break;
-                    case "26":
-                        res = coeffs[26]; break;
-                    case "27":
-                        res = coeffs[27]; break;
-                    case "28":
-                        res = coeffs[28]; break;
-                    case "29":
-                        res = coeffs[29]; break;
-                    case "30":
-                        res = coeffs[30]; break;
-                    case "31":
-                        res = coeffs[31]; break;
-                    case "32":
-                        res = coeffs[32]; break;
-                    default: res = 0; break;
-                }
+                double.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out res);
                 return res;
             }
+            if (type == "v") { return variables[int.Parse(value)]; }
+            if (type == "gv") { return globalVariables[value]; }
+            if (type == "f") { return getFunctionValue(value); }
             return 0;
+        }
+
+        private double getFunctionValue(string name)
+        {
+            double[] coeffs = this.functions;
+            double res;
+            // naming
+            string[] nameArr = name.Split(new string[] { "::" }, StringSplitOptions.None);
+            if (!int.TryParse(nameArr[0], out int result)) { return this.functionsMap[nameArr[0]][nameArr[1]]; }
+
+            switch (name)
+            {
+                case "0":
+                    res = coeffs[0]; break;
+                case "1":
+                    res = coeffs[1]; break;
+                case "2":
+                    res = coeffs[2]; break;
+                case "3":
+                    res = coeffs[3]; break;
+                case "4":
+                    res = coeffs[4]; break;
+                case "5":
+                    res = coeffs[5]; break;
+                case "6":
+                    res = coeffs[6]; break;
+                case "7":
+                    res = coeffs[7]; break;
+                case "8":
+                    res = coeffs[8]; break;
+                case "9":
+                    res = coeffs[9]; break;
+                case "10":
+                    res = coeffs[10]; break;
+                case "11":
+                    res = coeffs[11]; break;
+                case "12":
+                    res = coeffs[12]; break;
+                case "13":
+                    res = coeffs[13]; break;
+                case "14":
+                    res = coeffs[14]; break;
+                case "15":
+                    res = coeffs[15]; break;
+                case "16":
+                    res = coeffs[16]; break;
+                case "17":
+                    res = coeffs[17]; break;
+                case "18":
+                    res = coeffs[18]; break;
+                case "19":
+                    res = coeffs[19]; break;
+                case "20":
+                    res = coeffs[20]; break;
+                case "21":
+                    res = coeffs[21]; break;
+                case "22":
+                    res = coeffs[22]; break;
+                case "23":
+                    res = coeffs[23]; break;
+                case "24":
+                    res = coeffs[24]; break;
+                case "25":
+                    res = coeffs[25]; break;
+                case "26":
+                    res = coeffs[26]; break;
+                case "27":
+                    res = coeffs[27]; break;
+                case "28":
+                    res = coeffs[28]; break;
+                case "29":
+                    res = coeffs[29]; break;
+                case "30":
+                    res = coeffs[30]; break;
+                case "31":
+                    res = coeffs[31]; break;
+                case "32":
+                    res = coeffs[32]; break;
+                default: res = 0; break;
+            }
+            return res;
         }
 
         private int getPixelsCount0()
@@ -708,7 +780,7 @@ namespace PainteRS
             int count = 0;
             for (int i = 0; i < clearPoints.Count; ++i)
             {
-                if (clearPoints[i].Y < clearImage.Length / 2)
+                if (clearPoints[i].Y <  (double) clearImage.Length / 2)
                 {
                     ++count;
                 }
@@ -721,7 +793,7 @@ namespace PainteRS
             int count = 0;
             for (int i = 0; i < clearPoints.Count; ++i)
             {
-                if (clearPoints[i].Y > clearImage.Length / 2)
+                if (clearPoints[i].Y > (double) clearImage.Length / 2)
                 {
                     ++count;
                 }
@@ -734,7 +806,7 @@ namespace PainteRS
             int count = 0;
             for (int i = 0; i < clearPoints.Count; ++i)
             {
-                if (clearPoints[i].X > clearImage[0].Length / 2)
+                if (clearPoints[i].X > (double) clearImage[0].Length / 2)
                 {
                     ++count;
                 }
@@ -747,7 +819,7 @@ namespace PainteRS
             int count = 0;
             for (int i = 0; i < clearPoints.Count; ++i)
             {
-                if (clearPoints[i].X < clearImage[0].Length / 2)
+                if (clearPoints[i].X < (double) clearImage[0].Length / 2)
                 {
                     ++count;
                 }
@@ -757,14 +829,7 @@ namespace PainteRS
 
         public String getTestString()
         {
-            clearPoints = getClearPoints();
-            clearImage = getClearImage();
-            /*Point p = getMax();*/
-            /*            string s1 = "1.2";
-                        double d1;
-                        double.TryParse(s1, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out d1);
-                        return d1.ToString();*/
-
+            init();
             string res = "Ядро: \n";
             if (getLminToMax(getCenterMass()) < 0.2)
             {
@@ -779,7 +844,73 @@ namespace PainteRS
                 res += "Не распознано";
             }
             res += "\n" + getAllResults();
+
             return res;
+        }
+
+        private void init()
+        {
+            clearPoints = getClearPoints();
+            clearImage = getClearImage();
+            double[] functions = {
+                getPixelsCount0(), getPixelsCount1(), getPixelsCount2(), getPixelsCount3(), getLminToMax(getCenterMass()),
+                getLminToMax(getLeftDown()), getLminToMax(getRightDown()), getLminToMax(getLeftUp()), getLminToMax(getRightUp()),
+                getLminToMax(getLeftCenter()), getLminToMax(getCenterUp()), getLminToMax(getCenterCenter()),
+                // Координаты
+                getCenterMass().X, getCenterMass().Y, getLeftDown().X, getLeftDown().Y, getRightDown().X, getRightDown().Y,
+                getLeftUp().X, getLeftUp().Y, getRightUp().X, getRightUp().Y, getLeftCenter().X, getLeftCenter().Y, getCenterUp().X,
+                getCenterUp().Y, getCenterCenter().X, getCenterCenter().Y,
+                // Серклы 28                29                      30                          31                              32
+                getCircle(getCenterUp()), getCircle(getRightUp()), getCircle(getLeftCenter()), getCircle(getCenterCenter()), getCircle(getCenterDown())};
+            this.functions = functions;
+            // functionsMap
+            Dictionary<string, Dictionary<string, double>> fMap = new Dictionary<string, Dictionary<string, double>>();
+            fMap.Add("pixelsCount", new Dictionary<string, double>());
+            fMap.Add("Lmin/max", new Dictionary<string, double>());
+            fMap.Add("CoordinateX", new Dictionary<string, double>());
+            fMap.Add("CoordinateY", new Dictionary<string, double>());
+            fMap.Add("Circle", new Dictionary<string, double>());
+
+            // Добавление значений
+            fMap["pixelsCount"].Add("Up", functions[0]);
+            fMap["pixelsCount"].Add("Down", functions[1]);
+            fMap["pixelsCount"].Add("Right", functions[2]);
+            fMap["pixelsCount"].Add("Left", functions[3]);
+
+            fMap["Lmin/max"].Add("CenterMass", functions[4]);
+            fMap["Lmin/max"].Add("LeftDown", functions[5]);
+            fMap["Lmin/max"].Add("RightDown", functions[6]);
+            fMap["Lmin/max"].Add("LeftUp", functions[7]);
+            fMap["Lmin/max"].Add("RightUp", functions[8]);
+            fMap["Lmin/max"].Add("LeftCenter", functions[9]);
+            fMap["Lmin/max"].Add("CenterUp", functions[10]);
+            fMap["Lmin/max"].Add("CenterCenter", functions[11]);
+
+            fMap["CoordinateX"].Add("CenterMass", functions[12]);
+            fMap["CoordinateX"].Add("LeftDown", functions[14]);
+            fMap["CoordinateX"].Add("RightDown", functions[16]);
+            fMap["CoordinateX"].Add("LeftUp", functions[18]);
+            fMap["CoordinateX"].Add("RightUp", functions[20]);
+            fMap["CoordinateX"].Add("LeftCenter", functions[22]);
+            fMap["CoordinateX"].Add("CenterUp", functions[24]);
+            fMap["CoordinateX"].Add("CenterCenter", functions[26]);
+
+            fMap["CoordinateY"].Add("CenterMass", functions[13]);
+            fMap["CoordinateY"].Add("LeftDown", functions[15]);
+            fMap["CoordinateY"].Add("RightDown", functions[17]);
+            fMap["CoordinateY"].Add("LeftUp", functions[19]);
+            fMap["CoordinateY"].Add("RightUp", functions[21]);
+            fMap["CoordinateY"].Add("LeftCenter", functions[23]);
+            fMap["CoordinateY"].Add("CenterUp", functions[25]);
+            fMap["CoordinateY"].Add("CenterCenter", functions[27]);
+
+            fMap["Circle"].Add("CenterUp", functions[28]);
+            fMap["Circle"].Add("RightUp", functions[29]);
+            fMap["Circle"].Add("LeftCenter", functions[30]);
+            fMap["Circle"].Add("CenterCenter", functions[31]);
+            fMap["Circle"].Add("CenterDown", functions[32]);
+
+            this.functionsMap = fMap;
         }
 
     }

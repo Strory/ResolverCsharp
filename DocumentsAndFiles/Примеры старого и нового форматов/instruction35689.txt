@@ -1,0 +1,49 @@
+35689
+9
+0 / f 12 f 26
+1 - c 1 v 0
+2 * v 1 c 500
+3 / f 13 f 27
+4 - c 1 v 3
+5 abs v 4 empty 0
+6 / c 1 v 5
+7 + v 2 v 6
+8 = v 7 empty 0
+8
+0 / f 26 f 12
+1 - c 1 v 0
+2 * v 1 c -500
+3 / f 27 f 13
+4 - c 1 v 3
+5 * v 4 c -500
+6 - v 2 v 5
+7 = v 6 empty 0
+8
+0 / f 26 f 12
+1 - c 1 v 0
+2 * v 1 c -500
+3 / f 27 f 13
+4 - c 1 v 3
+5 * v 4 c 500
+6 - v 2 v 5
+7 = v 6 empty 0
+10
+0 / f 12 f 26
+1 - c 1 v 0
+2 abs v 1 empty 0
+3 / c 1 v 2
+4 / f 13 f 27
+5 - c 1 v 4
+6 abs v 5 empty 0
+7 / c 1 v 6
+8 - v 3 v 7
+9 = v 8 empty 0
+8
+0 / f 26 f 12
+1 - c 1 v 0
+2 * v 1 c 500
+3 / f 27 f 13
+4 - c 1 v 3
+5 * v 4 c -500
+6 - v 2 v 5
+7 = v 6 empty 0
