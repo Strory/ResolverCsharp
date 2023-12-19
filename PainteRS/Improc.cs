@@ -615,7 +615,8 @@ namespace PainteRS
 
         private string getMaxLetter(Dictionary<string, double> letters)
         {
-            return letters.FirstOrDefault(x => x.Value == letters.Values.Max()).Key;
+            string maxLetter = letters.FirstOrDefault(x => x.Value == letters.Values.Max()).Key;
+            return letters[maxLetter] == 0 ? "Не распознано" : maxLetter;
         }
 
         private double getValue2(int stringNumber, List<string> instruction, int variablesCount, Dictionary<string, double> globalVariables)

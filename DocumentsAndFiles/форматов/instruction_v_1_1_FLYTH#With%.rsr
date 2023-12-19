@@ -1,0 +1,136 @@
+Good recognizer FLYTH#
+20
+Fimp 7
+0 * c 6.7 f 6
+1 * c 16 f 28
+2 * c 7.7 f 30
+3 + v 0 v 1
+4 + v 3 v 2
+5 / v 4 c 30
+6 = v 5 empty 0
+Limp 7
+0 * c 5.2 f 11
+1 * c 170 f 8
+2 * c 59 f 32
+3 + v 0 v 1
+4 + v 3 v 2
+5 / v 4 c 230
+6 = v 5 empty 0
+Yimp 9
+0 * c 4.8 f 9
+1 * c 2.1 f 10
+2 * c 2.7 f 29
+3 * c 2.4 f 31
+4 + v 0 v 1
+5 + v 4 v 2
+6 + v 5 v 3
+7 / v 6 c 12
+8 = v 7 empty 0
+Timp 7
+0 * c 5.7 f 5
+1 * c 5.7 f 9
+2 * c 5.5 f 28
+3 + v 0 v 1
+4 + v 3 v 2
+5 / v 4 c 17
+6 = v 5 empty 0
+Himp 5
+0 * c 3.2 f 10
+1 * c 5.4 f 30
+2 + v 0 v 1
+3 / v 2 c 8.6
+4 = v 3 empty 0
+#imp 5
+0 * c 1.3 f 4
+1 * c 8.1 f 7
+2 + v 0 v 1
+3 / v 2 c 9.4
+4 = v 3 0 0
+F% 2
+0 sig gv Fimp c 0.19
+1 = v 0 0 0
+L% 2
+0 sig gv Limp c 0.387
+1 = v 0 0 0
+Y% 2
+0 sig gv Yimp c 0.179
+1 = v 0 0 0
+T% 2
+0 sig gv Timp c 0.268
+1 = v 0 0 0
+H% 2
+0 sig gv Himp c 0.133
+1 = v 0 0 0
+#% 2
+0 sig gv #imp c 0.23
+1 = v 0 0 0
+#isMax? 10
+0 > gv #imp gv Fimp
+1 > gv #imp gv Limp
+2 > gv #imp gv Yimp
+3 > gv #imp gv Timp
+4 > gv #imp gv Himp
+5 * v 0 v 1
+6 * v 2 v 3
+7 * v 5 v 6
+8 * v 4 v 7
+9 = v 8 0 0
+!#isMax? 2
+0 ! gv #isMax? 0 0
+1 = v 0 0 0
+resF 4
+0 * gv #isMax? gv F%
+1 * gv !#isMax? gv Fimp
+2 + v 0 v 1
+3 = v 2 0 0
+resL 4
+0 * gv #isMax? gv L%
+1 * gv !#isMax? gv Limp
+2 + v 0 v 1
+3 = v 2 0 0
+resY 4
+0 * gv #isMax? gv Y%
+1 * gv !#isMax? gv Yimp
+2 + v 0 v 1
+3 = v 2 0 0
+resT 4
+0 * gv #isMax? gv T%
+1 * gv !#isMax? gv Timp
+2 + v 0 v 1
+3 = v 2 0 0
+resH 4
+0 * gv #isMax? gv H%
+1 * gv !#isMax? gv Himp
+2 + v 0 v 1
+3 = v 2 0 0
+res# 4
+0 * gv #isMax? gv #%
+1 * gv !#isMax? gv #imp
+2 + v 0 v 1
+3 = v 2 0 0
+6
+F 1
+0 = gv F% 0 0
+L 1
+0 = gv L% 0 0
+Y 1
+0 = gv Y% 0 0
+T 1
+0 = gv T% 0 0
+H 1
+0 = gv H% 0 0
+# 1
+0 = gv #% 0 0
+6
+F 1
+0 = gv resF 0 0
+L 1
+0 = gv resL 0 0
+Y 1
+0 = gv resY 0 0
+T 1
+0 = gv resT 0 0
+H 1
+0 = gv resH 0 0
+# 1
+0 = gv res# 0 0
