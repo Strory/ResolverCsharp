@@ -317,12 +317,14 @@ namespace PainteRS
                 Console.WriteLine(name);
             }
             StreamReader sr = new StreamReader(ofd.FileName);
-/*            Line = sr.ReadLine();
+            /*            Line = sr.ReadLine();
 
-            tmp.Add(Line);*/
+                        tmp.Add(Line);*/
             /*           Improc.instructions.Add(tmp);*/
             while ((Line = sr.ReadLine()) != null)
             {
+                Line = Line.Replace('с', 'c');
+                Line = Line.Replace('С', 'C');
                 tmp.Add(Line);
             }
             sr.Close();

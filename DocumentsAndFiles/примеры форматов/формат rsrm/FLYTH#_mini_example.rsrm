@@ -1,0 +1,15 @@
+Do your best
+6
+F (6.7 * f->Lmin/max::RightDown + 16 * f->Circle::CenterUp + 7.7 * f->Circle::LeftCenter) / 30
+L (5.2 * f->Lmin/max::CenterCenter + 170 * f->Lmin/max::RightUp + 59 * f->Circle::CenterDown) / 230
+Y (4.8 * f->Lmin/max::LeftCenter + 2.1 * f->Lmin/max::CenterUp + 2.7 * f->Circle::RightUp + 2.4 * f->Circle::CenterCenter) / 12
+T (5.7 * f->Lmin/max::LeftDown + 5.7 * f->Lmin/max::LeftCenter + 5.5 * f->Circle::CenterUp) / 17
+H (3.2 * f->Lmin/max::CenterUp + 5.4 * f->Circle::LeftCenter) / 8.6
+# (1.3 * f->Lmin/max::CenterMass + 8.1 * f->Lmin/max::LeftUp) / 9.4
+6
+F f->sig(((6.7 * f->Lmin/max::RightDown + 16 * f->Circle::CenterUp + 7.7 * f->Circle::LeftCenter) / 30), 0.19)
+L f->sig(((5.2 * f->Lmin/max::CenterCenter + 170 * f->Lmin/max::RightUp + 59 * f->Circle::CenterDown) / 230), 0.387)
+Y f->sig(((4.8 * f->Lmin/max::LeftCenter + 2.1 * f->Lmin/max::CenterUp + 2.7 * f->Circle::RightUp + 2.4 * f->Circle::CenterCenter) / 12), 0.179)
+T f->sig(((5.7 * f->Lmin/max::LeftDown + 5.7 * f->Lmin/max::LeftCenter + 5.5 * f->Circle::CenterUp) / 17), 0.268)
+H f->sig(((3.2 * f->Lmin/max::CenterUp + 5.4 * f->Circle::LeftCenter) / 8.6), 0.133)
+# f->sig(((1.3 * f->Lmin/max::CenterMass + 8.1 * f->Lmin/max::LeftUp) / 9.4), 0.230)

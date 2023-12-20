@@ -537,9 +537,62 @@ namespace PainteRS
                     mainString += instructions[i][1] + "\n";
                     // новая интерпретация!!!
                     mainString += instructionsReader2(i);
+                } else if (instructionFormat == "rsrm")
+                {
+                    mainString += instructions[i][1] + "\n";
+                    // мини формат
+                    mainString += instructionsReaderMini(i);
                 }
             }
             return mainString;
+        }
+
+        private string instructionsReaderMini(int instructionNumber)
+        {
+            List<string> instruction = instructions[instructionNumber];
+            Dictionary<string, double> results = new Dictionary<string, double>();
+            Dictionary<string, double> percents = new Dictionary<string, double>();
+            int stringNumber = 2;
+            // блок 1 создание мапы результатов
+            int instructionsCount = int.Parse(instruction[stringNumber]);
+            ++stringNumber;
+            for (int i = 0; i < instructionsCount; ++i)
+            {
+                string symbol = instruction[stringNumber][0].ToString();
+                string mathExpression = instruction[stringNumber].Substring(2);
+                double value = getCalculate(mathExpression);
+                results.Add(symbol, value);
+                ++stringNumber;
+            }
+            if (instruction[stringNumber].Trim() == "endfile")
+            {
+                foreach (var pair in results)
+                {
+                    percents.Add(pair.Key, pair.Value);
+                }
+            } else
+            {
+                // блок 2 (опционально)
+                instructionsCount = int.Parse(instruction[stringNumber]);
+                ++stringNumber;
+                for (int i = 0; i < instructionsCount; ++i)
+                {
+                    string symbol = instruction[stringNumber][0].ToString();
+                    string mathExpression = instruction[stringNumber].Substring(2);
+                    double value = getCalculate(mathExpression);
+                    percents.Add(symbol, value);
+                    ++stringNumber;
+                }
+            }
+
+            string symb = getMaxLetter(results);
+            // проценты
+            string result = "res: " + symb + "\n";
+            foreach (var pair in percents)
+            {
+                result += pair.Key + ": " + Math.Round(pair.Value * 100, 2) + "%\n";
+            }
+            return result;
         }
 
         private string instructionsReader2(int instructionNumber)
@@ -826,6 +879,155 @@ namespace PainteRS
                 }
             }
             return count;
+        }
+
+        private string getMainCalculate()
+        {
+            string exp = "f->sig(2.7 + (f->abs(4 - 64 / 4) + 2) * 3 / f->0, 5)";
+            string exp2 = "2 + 2 * 5";
+            string exp3 = "f->abs(4 - 64 / 4)";
+
+            double value = getCalculate(exp);
+            return value.ToString();
+        }
+
+        private double getCalculate(string exp)
+        {
+            List<string> fullSplit = getFullSplit(exp);
+            if (fullSplit.Count == 1)
+            {
+                return getValueCalculate(fullSplit[0], "null");
+            }
+
+            string tmpExp = "";
+            double value = getValueCalculate(fullSplit[0], fullSplit[1]);
+
+            // Выполняем операции
+            for (int i = 1; i < fullSplit.Count; ++i)
+            {
+                if (fullSplit[i] == "+" || fullSplit[i] == "-")
+                {
+                    string newStr = "";
+                    for (int j = i + 1; j < fullSplit.Count; ++j)
+                    {
+                        newStr += fullSplit[j] + " ";
+                    }
+                    if (fullSplit[i] == "+") { return value + getCalculate(newStr); }
+                    if (fullSplit[i] == "-") { return value - getCalculate(newStr); }
+                }
+
+                if (fullSplit[i] == "*" || fullSplit[i] == "/")
+                {
+                    double arg2;
+                    if (fullSplit[i + 1][0] == 'f' && i + 2 < fullSplit.Count && fullSplit[i + 2][0] == '(')
+                    {
+                        arg2 = getValueCalculate(fullSplit[i + 1], fullSplit[i + 2]);
+                    }
+                    else
+                    {
+                        arg2 = getValueCalculate(fullSplit[i + 1], "null");
+                    }
+                    if (fullSplit[i] == "*") { value *= arg2; }
+                    if (fullSplit[i] == "/") { value /= arg2; }
+                    ++i;
+                }
+            }
+            return value;
+        }
+
+        // f->1; f->Lminmax::CenterLeft; f->abs(23 - 12 + 4); f->sig(23, 32);
+
+        private double getValueCalculate(string value, string arg)
+        {
+            if (value[0] == '(')
+            {
+                return getCalculate(value.Substring(1, value.Length - 2));
+            }
+            else if (value[0] == 'f')
+            {
+                string func = value.Substring(3);
+                if (func == "abs")
+                {
+                    return Math.Abs(getCalculate(arg));
+                }
+                else if (func == "sig")
+                {
+                    string[] arguments = arg.Substring(1, arg.Length - 2).Split(',');
+                    double arg1 = getCalculate(arguments[0]);
+                    double arg2 = getCalculate(arguments[1]);
+                    return sigmoid(arg1, arg2);
+                }
+                else
+                {
+                    return getFunctionValue(func);
+                }
+            }
+            else
+            {
+                double res;
+                double.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out res);
+                return res;
+            }
+        }
+
+        private List<string> getFullSplit(string exp)
+        {
+            List<string> expSplit = getSplitString(exp);
+            List<string> resultString = new List<string>();
+            string tmp;
+            string[] tmpArr;
+
+            for (int i = 0; i < expSplit.Count; ++i)
+            {
+                if (expSplit[i].Contains("("))
+                {
+                    resultString.Add(expSplit[i]);
+                }
+                else
+                {
+                    tmp = expSplit[i].Trim();
+                    tmpArr = tmp.Split(' ');
+                    for (int j = 0; j < tmpArr.Length; ++j) { resultString.Add(tmpArr[j]); }
+                }
+            }
+
+            return resultString;
+        }
+
+        private List<string> getSplitString(string exp)
+        {
+            List<string> mainArr = new List<string>();
+
+            bool bracketFlag = true;
+            int bracketsCount = 0;
+            string tmpStr = "";
+            for (int i = 0; i < exp.Length; ++i)
+            {
+                bracketFlag = true;
+                if (exp[i] == '(')
+                {
+                    if (bracketsCount == 0)
+                    {
+                        if (!(tmpStr.Length == 0)) { mainArr.Add(tmpStr); tmpStr = ""; }
+                    }
+                    ++bracketsCount;
+                }
+                if (exp[i] == ')')
+                {
+                    --bracketsCount;
+                    if (bracketsCount == 0)
+                    {
+                        tmpStr += exp[i];
+                        bracketFlag = false;
+                        if (!(tmpStr.Length == 0)) { mainArr.Add(tmpStr); tmpStr = ""; }
+                    }
+                }
+
+                if (bracketFlag) { tmpStr += exp[i]; }
+            }
+            if (!(tmpStr.Length == 0)) { mainArr.Add(tmpStr); tmpStr = ""; }
+
+            return mainArr;
         }
 
         public String getTestString()
