@@ -908,12 +908,19 @@ namespace PainteRS
                 if (fullSplit[i] == "+" || fullSplit[i] == "-")
                 {
                     string newStr = "";
-                    for (int j = i + 1; j < fullSplit.Count; ++j)
+                    if (fullSplit[i] == "-")
+                    {
+                        newStr += "-1 * " + fullSplit[i + 1] + " ";
+                    }
+                    else
+                    {
+                        newStr += fullSplit[i + 1] + " ";
+                    }
+                    for (int j = i + 2; j < fullSplit.Count; ++j)
                     {
                         newStr += fullSplit[j] + " ";
                     }
-                    if (fullSplit[i] == "+") { return value + getCalculate(newStr); }
-                    if (fullSplit[i] == "-") { return value - getCalculate(newStr); }
+                    return value + getCalculate(newStr);
                 }
 
                 if (fullSplit[i] == "*" || fullSplit[i] == "/")
