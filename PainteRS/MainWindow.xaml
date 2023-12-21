@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PainteRS"
         mc:Ignorable="d"
-        Title="PainteRS" Height="477" Width="800" WindowStyle="ThreeDBorderWindow" BorderThickness="0,1,0,0" MinWidth="800" MinHeight="477" Icon="/Icon2.ico">
+        Title="PainteRS" Height="500" Width="900" WindowStyle="ThreeDBorderWindow" BorderThickness="0,1,0,0" MinWidth="800" MinHeight="477" Icon="/Icon2.ico">
     <Window.Resources>
-        <Image x:Key="RezOn" Source="/Result1.png" Stretch="Fill" Margin="-2,-2,-2,-2" />
+        <Image x:Key="RezOn" Source="/Result1.png" Stretch="Fill" Margin="0,0,-2,-2" />
         <Image x:Key="New" Source="/New1.png" Stretch="Fill" Margin="-2,-2,-2,-2"/>
         <Image x:Key="Paint" Source="/Paint1.png" Stretch="Fill" Margin="-2,-2,-2,-2"/>
         <Image x:Key="Erase" Source="/Erase1.png" Stretch="Fill" Margin="-2,-2,-2,-2"/>
@@ -129,13 +129,12 @@
                 <ColumnDefinition Width="361*"/>
             </Grid.ColumnDefinitions>
 
-            <Canvas Name="Canv" Margin="0,0,258,49" Background="White" 
+            <Canvas Name="Canv" Margin="25,17,400,61" Background="White" 
                     MouseMove="Canv_MouseMove" MouseUp="Canv_MouseUp" 
                     MouseLeave="Canv_MouseLeave" RenderTransformOrigin="0.497,0.474" 
-                    ClipToBounds="True" MouseLeftButtonDown="Canv_MouseLeftButtonDown" 
-                    Grid.Column="1" RenderOptions.EdgeMode="Aliased" Grid.Row="1" Width="475" Height="320"/>
-            <TextBox x:Name="Result" Margin="0,9,52,0" TextWrapping="Wrap" Text="Вывод" Width="135" HorizontalAlignment="Right" IsReadOnly="True" Height="116" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1"/>
-            <Image  Margin="0,134,52,0" 
+                    ClipToBounds="True" MouseLeftButtonDown="Canv_MouseLeftButtonDown" RenderOptions.EdgeMode="Aliased" Grid.Row="1" Width="475" Height="320" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="Result" Margin="0,18,221,0" TextWrapping="Wrap" Text="Вывод" Width="145" HorizontalAlignment="Right" IsReadOnly="True" Height="266" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1"/>
+            <Image  Margin="0,300,227,0" 
                     Height="35" 
                     VerticalAlignment="Top" 
                     Grid.Column="1" 
@@ -144,7 +143,7 @@
                     Width="135" 
                     Source="/Result2.png" Stretch="Fill"/>
             <Button x:Name="RezButton" 
-                    Margin="0,134,52,0" 
+                    Margin="0,300,227,0" 
                     Height="35" 
                     VerticalAlignment="Top" 
                     Grid.Column="1" 
@@ -171,7 +170,7 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <ListBox x:Name="ListBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding LIST}" Margin="0,203,52,0" Width="135" Height="120" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+            <ListBox x:Name="ListBox" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding LIST}" Margin="0,19,52,0" Width="135" Height="320" VerticalAlignment="Top" HorizontalAlignment="Right"/>
         </Grid>
     </Grid>
 </Window>
