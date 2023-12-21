@@ -916,10 +916,14 @@ namespace PainteRS
                     {
                         newStr += fullSplit[i + 1] + " ";
                     }
-                    for (int j = i + 2; j < fullSplit.Count; ++j)
+                    if (i + 2 < fullSplit.Count)
                     {
-                        newStr += fullSplit[j] + " ";
+                        for (int j = i + 2; j < fullSplit.Count; ++j)
+                        {
+                            newStr += fullSplit[j] + " ";
+                        }
                     }
+                    
                     return value + getCalculate(newStr);
                 }
 
