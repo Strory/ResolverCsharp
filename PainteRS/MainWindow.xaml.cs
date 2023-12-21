@@ -220,7 +220,7 @@ namespace PainteRS
             salo = new Improc(Canv);
             if (salo.BP.Count != 0)
             {
-/*                Result.Text = "";*/
+                /*                Result.Text = "";*/
                 var prob = salo.Otnoshenie(salo.FindRelativeCenterMassOrMat());
 
                 CMassX = salo.centerMass.X; // обновление центров
@@ -228,29 +228,29 @@ namespace PainteRS
                 CMatX = salo.centerMat.X;
                 CMatY = salo.centerMat.Y;
 
-/*                List<string> ListOfResults = new List<string>(1 + LibraryCount);*/
+                /*                List<string> ListOfResults = new List<string>(1 + LibraryCount);*/
                 /*                var lett = salo.WhatsLett();*/
 
                 var lett = salo.getTestString();
                 string superBigString = lett.ToString() + "\n";
                 Result.Text = superBigString;
 
-/*                if (ACSLibraryON)
-                {
-                    object[] ObjectListOfAllMinMaxes = prob.Cast<object>().ToArray();
-                    for (int i = 0; i < LibraryCount; ++i)
-                    {
-                        int FoundMaxIndex = salo.Calculator(formuls, ObjectListOfAllMinMaxes);
-                        superBigString += string.Format("Library{0}: {1}", i, ListOfACSLetters[i][FoundMaxIndex]) + "\n";
+                /*                if (ACSLibraryON)
+                                {
+                                    object[] ObjectListOfAllMinMaxes = prob.Cast<object>().ToArray();
+                                    for (int i = 0; i < LibraryCount; ++i)
+                                    {
+                                        int FoundMaxIndex = salo.Calculator(formuls, ObjectListOfAllMinMaxes);
+                                        superBigString += string.Format("Library{0}: {1}", i, ListOfACSLetters[i][FoundMaxIndex]) + "\n";
 
-                    }
+                                    }
 
-                }
-                Result.AppendText(superBigString);
-                if (IsProc)
-                {
-                    proc.Add(prob[0]);
-                }*/
+                                }
+                                Result.AppendText(superBigString);
+                                if (IsProc)
+                                {
+                                    proc.Add(prob[0]);
+                                }*/
 
                 Ellipse ellipse = new Ellipse()
                 {
@@ -309,7 +309,7 @@ namespace PainteRS
 
             List<String> tmp = new List<string>();
             tmp.Add(ofd.SafeFileName);
-/*            Improc.instructions.Add(tmp);*/
+            /*            Improc.instructions.Add(tmp);*/
 
             (DataContext as Improc).LIST = namesLibs.ToArray();
             foreach (string name in (DataContext as Improc).LIST)

@@ -99,6 +99,7 @@ namespace PainteRS
                 }
                 x++;
             }
+
         }
         public (double cxl, double cxr, double cyt, double cyd) Counter()
         {
@@ -450,7 +451,7 @@ namespace PainteRS
                     ++count;
                 }
             }
-            return (double) count / clearPoints.Count;
+            return (double)count / clearPoints.Count;
         }
 
         private String myFormul()
@@ -537,7 +538,8 @@ namespace PainteRS
                     mainString += instructions[i][1] + "\n";
                     // новая интерпретация!!!
                     mainString += instructionsReader2(i);
-                } else if (instructionFormat == "rsrm")
+                }
+                else if (instructionFormat == "rsrm")
                 {
                     mainString += instructions[i][1] + "\n";
                     // мини формат
@@ -570,7 +572,8 @@ namespace PainteRS
                 {
                     percents.Add(pair.Key, pair.Value);
                 }
-            } else
+            }
+            else
             {
                 // блок 2 (опционально)
                 instructionsCount = int.Parse(instruction[stringNumber]);
@@ -725,7 +728,8 @@ namespace PainteRS
 
         private double createVariable(string type, string value, double[] variables)
         {
-            if (type == "c") {
+            if (type == "c")
+            {
                 double res;
                 double.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out res);
                 return res;
@@ -774,12 +778,13 @@ namespace PainteRS
             double res;
             // naming
             string[] nameArr = name.Split(new string[] { "::" }, StringSplitOptions.None);
-            if (!int.TryParse(nameArr[0], out int result)) { 
+            if (!int.TryParse(nameArr[0], out int result))
+            {
                 if (nameArr.Length == 1)
                 {
                     return functionReader(nameArr[0]);
                 }
-                return this.functionsMap[nameArr[0]][nameArr[1]]; 
+                return this.functionsMap[nameArr[0]][nameArr[1]];
             }
 
             switch (name)
@@ -860,7 +865,7 @@ namespace PainteRS
             int count = 0;
             for (int i = 0; i < clearPoints.Count; ++i)
             {
-                if (clearPoints[i].Y <  (double) clearImage.Length / 2)
+                if (clearPoints[i].Y < (double)clearImage.Length / 2)
                 {
                     ++count;
                 }
@@ -873,7 +878,7 @@ namespace PainteRS
             int count = 0;
             for (int i = 0; i < clearPoints.Count; ++i)
             {
-                if (clearPoints[i].Y > (double) clearImage.Length / 2)
+                if (clearPoints[i].Y > (double)clearImage.Length / 2)
                 {
                     ++count;
                 }
@@ -886,7 +891,7 @@ namespace PainteRS
             int count = 0;
             for (int i = 0; i < clearPoints.Count; ++i)
             {
-                if (clearPoints[i].X > (double) clearImage[0].Length / 2)
+                if (clearPoints[i].X > (double)clearImage[0].Length / 2)
                 {
                     ++count;
                 }
@@ -899,7 +904,7 @@ namespace PainteRS
             int count = 0;
             for (int i = 0; i < clearPoints.Count; ++i)
             {
-                if (clearPoints[i].X < (double) clearImage[0].Length / 2)
+                if (clearPoints[i].X < (double)clearImage[0].Length / 2)
                 {
                     ++count;
                 }
@@ -949,7 +954,7 @@ namespace PainteRS
                             newStr += fullSplit[j] + " ";
                         }
                     }
-                    
+
                     return value + getCalculate(newStr);
                 }
 
@@ -1102,7 +1107,6 @@ namespace PainteRS
                 // Серклы 28                29                      30                          31                              32
                 getCircle(getCenterUp()), getCircle(getRightUp()), getCircle(getLeftCenter()), getCircle(getCenterCenter()), getCircle(getCenterDown())};
             this.functions = functions;
-
             // functionsMap
             Dictionary<string, Dictionary<string, double>> fMap = new Dictionary<string, Dictionary<string, double>>();
             fMap.Add("pixelsCount", new Dictionary<string, double>());
