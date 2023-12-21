@@ -711,6 +711,7 @@ namespace PainteRS
             if (type == "*") { return var1 * var2; }
             if (type == "/") { return var1 / var2; }
             if (type == "abs") { return Math.Abs(var1); }
+            if (type == "sqrt") { return Math.Sqrt(var1); }
             if (type == "=") { return var1; }
             if (type == "<") { return var1 < var2 ? 1 : 0; }
             if (type == ">") { return var1 > var2 ? 1 : 0; }
@@ -748,13 +749,38 @@ namespace PainteRS
             return 0;
         }
 
+        private double functionReader(string name)
+        {
+            string[] nameArr = name.Split('(');
+            if (nameArr[0] == "Lmin")
+            {
+                if (nameArr[1].Substring(0, nameArr[1].Length - 1) == "cm")
+                {
+                    return getLmin(getCenterMass());
+                }
+                string[] coordinates = nameArr[1].Substring(0, nameArr[1].Length - 1).Split(',');
+                double coorX, coorY;
+
+                double.TryParse(coordinates[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out coorX);
+                double.TryParse(coordinates[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out coorY);
+                return getLmin(new Point(coorX * clearImage[0].Length - 1, coorY * clearImage.Length - 1));
+            }
+            return 0;
+        }
+
         private double getFunctionValue(string name)
         {
             double[] coeffs = this.functions;
             double res;
             // naming
             string[] nameArr = name.Split(new string[] { "::" }, StringSplitOptions.None);
-            if (!int.TryParse(nameArr[0], out int result)) { return this.functionsMap[nameArr[0]][nameArr[1]]; }
+            if (!int.TryParse(nameArr[0], out int result)) { 
+                if (nameArr.Length == 1)
+                {
+                    return functionReader(nameArr[0]);
+                }
+                return this.functionsMap[nameArr[0]][nameArr[1]]; 
+            }
 
             switch (name)
             {
@@ -1044,7 +1070,7 @@ namespace PainteRS
         public String getTestString()
         {
             init();
-            string res = "Ядро: \n";
+            string res = "Ядро: ";
             if (getLminToMax(getCenterMass()) < 0.2)
             {
                 res += "1";
@@ -1058,7 +1084,6 @@ namespace PainteRS
                 res += "Не распознано";
             }
             res += "\n" + getAllResults();
-
             return res;
         }
 
@@ -1077,6 +1102,7 @@ namespace PainteRS
                 // Серклы 28                29                      30                          31                              32
                 getCircle(getCenterUp()), getCircle(getRightUp()), getCircle(getLeftCenter()), getCircle(getCenterCenter()), getCircle(getCenterDown())};
             this.functions = functions;
+
             // functionsMap
             Dictionary<string, Dictionary<string, double>> fMap = new Dictionary<string, Dictionary<string, double>>();
             fMap.Add("pixelsCount", new Dictionary<string, double>());
