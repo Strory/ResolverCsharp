@@ -614,29 +614,40 @@ namespace PainteRS
                 globalVariables.Add(key, value);
                 stringNumber += instCount + 1;
             }
-            // блок 2 создание мапы процентов
-            instructionsCount = int.Parse(instruction[stringNumber]);
-            ++stringNumber;
-            for (int i = 0; i < instructionsCount; ++i)
+            if (instruction[stringNumber] == "endfile")
             {
-                string[] pair = instruction[stringNumber].Split();
-                string key = pair[0];
-                int instCount = int.Parse(pair[1]);
-                double value = getValue2(stringNumber, instruction, instCount, globalVariables);
-                percents.Add(key, value);
-                stringNumber += instCount + 1;
+                foreach (var pair in globalVariables)
+                {
+                    percents.Add(pair.Key, pair.Value);
+                    results.Add(pair.Key, pair.Value);
+                }
             }
-            // блок 3 создание мапы результатов
-            instructionsCount = int.Parse(instruction[stringNumber]);
-            ++stringNumber;
-            for (int i = 0; i < instructionsCount; ++i)
+            else
             {
-                string[] pair = instruction[stringNumber].Split();
-                string key = pair[0];
-                int instCount = int.Parse(pair[1]);
-                double value = getValue2(stringNumber, instruction, instCount, globalVariables);
-                results.Add(key, value);
-                stringNumber += instCount + 1;
+                // блок 2 создание мапы процентов
+                instructionsCount = int.Parse(instruction[stringNumber]);
+                ++stringNumber;
+                for (int i = 0; i < instructionsCount; ++i)
+                {
+                    string[] pair = instruction[stringNumber].Split();
+                    string key = pair[0];
+                    int instCount = int.Parse(pair[1]);
+                    double value = getValue2(stringNumber, instruction, instCount, globalVariables);
+                    percents.Add(key, value);
+                    stringNumber += instCount + 1;
+                }
+                // блок 3 создание мапы результатов
+                instructionsCount = int.Parse(instruction[stringNumber]);
+                ++stringNumber;
+                for (int i = 0; i < instructionsCount; ++i)
+                {
+                    string[] pair = instruction[stringNumber].Split();
+                    string key = pair[0];
+                    int instCount = int.Parse(pair[1]);
+                    double value = getValue2(stringNumber, instruction, instCount, globalVariables);
+                    results.Add(key, value);
+                    stringNumber += instCount + 1;
+                }
             }
             // Создание строки вывода
             // извлечение максимума
