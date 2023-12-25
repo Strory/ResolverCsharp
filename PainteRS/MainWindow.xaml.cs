@@ -252,7 +252,7 @@ namespace PainteRS
                                     proc.Add(prob[0]);
                                 }*/
 
-                Ellipse ellipse = new Ellipse()
+/*                Ellipse ellipse = new Ellipse()
                 {
                     Fill = Brushes.Red,
                     Stroke = Brushes.White,
@@ -273,7 +273,7 @@ namespace PainteRS
                 };
                 Canvas.SetLeft(ellipseMat, salo.centerMat.X);
                 Canvas.SetTop(ellipseMat, salo.centerMat.Y);
-                Canv.Children.Add(ellipseMat);
+                Canv.Children.Add(ellipseMat);*/
             }
             else
             {
