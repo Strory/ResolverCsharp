@@ -1002,6 +1002,10 @@ namespace PainteRS
                 {
                     return Math.Abs(getCalculate(arg));
                 }
+                else if (func == "sqrt")
+                {
+                    return Math.Sqrt(getCalculate(arg));
+                }
                 else if (func == "sig")
                 {
                     string[] arguments = arg.Substring(1, arg.Length - 2).Split(',');
