@@ -861,6 +861,10 @@ namespace PainteRS
                     res = coeffs[31]; break;
                 case "32":
                     res = coeffs[32]; break;
+                case "33":
+                    res = coeffs[33]; break;
+                case "34":
+                    res = coeffs[34]; break;
                 default: res = 0; break;
             }
             return res;
