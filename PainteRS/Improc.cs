@@ -1113,7 +1113,9 @@ namespace PainteRS
                 getLeftUp().X, getLeftUp().Y, getRightUp().X, getRightUp().Y, getLeftCenter().X, getLeftCenter().Y, getCenterUp().X,
                 getCenterUp().Y, getCenterCenter().X, getCenterCenter().Y,
                 // Серклы 28                29                      30                          31                              32
-                getCircle(getCenterUp()), getCircle(getRightUp()), getCircle(getLeftCenter()), getCircle(getCenterCenter()), getCircle(getCenterDown())};
+                getCircle(getCenterUp()), getCircle(getRightUp()), getCircle(getLeftCenter()), getCircle(getCenterCenter()), getCircle(getCenterDown()),
+                //  33                      34
+                getCircle(getLeftDown()), getCircle(getLeftUp())};
             this.functions = functions;
 
             // functionsMap
@@ -1162,6 +1164,8 @@ namespace PainteRS
             fMap["Circle"].Add("LeftCenter", functions[30]);
             fMap["Circle"].Add("CenterCenter", functions[31]);
             fMap["Circle"].Add("CenterDown", functions[32]);
+            fMap["Circle"].Add("LeftDown", functions[33]);
+            fMap["Circle"].Add("LeftUp", functions[34]);
 
             this.functionsMap = fMap;
         }

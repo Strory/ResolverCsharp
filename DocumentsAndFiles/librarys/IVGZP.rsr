@@ -1,0 +1,78 @@
+IVGZP
+17
+L_I 4
+0 > f 9 c 0.321
+1 < f 9 c 0.44
+2 & v 0 v 1
+3 = v 2 empty 0
+L_V 4
+0 > f 9 c 0.18
+1 < f 9 c 0.239
+2 & v 0 v 1
+3 = v 2 empty 0
+L_G 2
+0 == f 9 c 0
+1 = v 0 empty 0
+L_P 4
+0 > f 9 c 0.01
+1 < f 9 c 0.119
+2 & v 0 v 1
+3 = v 2 empty 0
+L_Z 4
+0 > f 9 c 0.23
+1 < f 9 c 0.32
+2 & v 0 v 1
+3 = v 2 empty 0
+L_# 4
+0 > f 9 c 0.12
+1 < f 9 c 0.179
+2 & v 0 v 1
+3 = v 2 empty 0
+I% 1
+0 sig f 9 c 0.3805
+V% 1
+0 sig f 9 c 0.2095
+P% 1
+0 sig f 9 c 0.0445
+Z% 1
+0 sig f 9 c 0.275
+#% 1
+0 sig f 9 c 0.1495
+resI 1
+0 = gv L_I empty 0
+resP 1
+0 = gv L_P empty 0
+resV 1
+0 = gv L_V empty 0
+resG 1
+0 = gv L_G empty 0
+resZ 1
+0 = gv L_Z empty 0
+res# 1
+0 = gv L_# empty 0
+6
+I 1
+0 = gv I% 0 0
+V 1
+0 = gv V% 0 0
+G 1
+0 = gv L_G 0 0
+P 1
+0 = gv P% 0 0
+Z 1
+0 = gv Z% 0 0
+# 1
+0 = gv #% 0 0
+6
+I 1
+0 = gv resI 0 0
+V 1
+0 = gv resV 0 0
+G 1
+0 = gv resG 0 0
+P 1
+0 = gv resP 0 0
+Z 1
+0 = gv resZ 0 0
+# 1
+0 = gv res# 0 0
