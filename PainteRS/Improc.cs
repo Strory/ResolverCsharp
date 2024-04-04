@@ -867,6 +867,8 @@ namespace PainteRS
                     res = coeffs[34]; break;
                 case "35":
                     res = coeffs[35]; break;
+                case "36":
+                    res = coeffs[36]; break;
                 default: res = 0; break;
             }
             return res;
@@ -1103,6 +1105,7 @@ namespace PainteRS
                 res += "Не распознано";
             }
             res += "\n" + getAllResults();
+/*            res = clearPoints.Count.ToString();*/
             return res;
         }
 
@@ -1120,8 +1123,8 @@ namespace PainteRS
                 getCenterUp().Y, getCenterCenter().X, getCenterCenter().Y,
                 // Серклы 28                29                      30                          31                              32
                 getCircle(getCenterUp()), getCircle(getRightUp()), getCircle(getLeftCenter()), getCircle(getCenterCenter()), getCircle(getCenterDown()),
-                //  33                      34                      35
-                getCircle(getLeftDown()), getCircle(getLeftUp()), getCircle(getRightCenter())};
+                //  33                      34                      35                          36
+                getCircle(getLeftDown()), getCircle(getLeftUp()), getCircle(getRightCenter()), getLminToMax(getCenterDown())};
             this.functions = functions;
 
             // functionsMap
@@ -1173,6 +1176,8 @@ namespace PainteRS
             fMap["Circle"].Add("LeftDown", functions[33]);
             fMap["Circle"].Add("LeftUp", functions[34]);
             fMap["Circle"].Add("RightCenter", functions[35]);
+
+            fMap["Lmin/max"].Add("CenterDown", functions[36]);
 
             this.functionsMap = fMap;
         }
